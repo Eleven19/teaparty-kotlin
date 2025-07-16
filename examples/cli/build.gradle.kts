@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 
 plugins {
@@ -5,18 +6,19 @@ plugins {
 }
 
 kotlin {
-
+    jvmToolchain(21)
     jvm {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         binaries {
             executable {
-                entryPoint = "example.cli.MainKt"
+                mainClass.set("example.cli.MainKt")
             }
         }
-        compilations.all {
-            compilerOptions {
-                jvmTarget.set("1.8")
-            }
-        }
+//        compilations.all {
+//            compilerOptions {
+//                jvmTarget.set("1.8")
+//            }
+//        }
     }
     js(IR) {
         nodejs()
@@ -31,22 +33,29 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("com.github.ajalt.clikt:clikt:4.2.2")
+                implementation(libs.clikt)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation(libs.kotlin.test.common)
+                implementation(libs.kotlin.test.annotations.common)
             }
         }
         val jvmTest by getting {
             dependencies {
-                implementation(kotlin("test-junit5"))
+                implementation(libs.kotlin.test.junit5)
             }
         }
         val jsMain by getting {}
-        val jsTest by getting {}
+        val jsTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test.js)
+            }
+        }
     }
 }
 
-    // JVM executable entry point handled above in the jvm target
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}

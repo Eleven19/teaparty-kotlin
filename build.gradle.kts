@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.model.KotlinProject
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform") version "2.2.0" apply false
